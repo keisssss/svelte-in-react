@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "watch:svelte": "rollup -c -w",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && rollup -c",
     "preview": "vite preview",
     "start": "sirv public --no-clear"
   },
