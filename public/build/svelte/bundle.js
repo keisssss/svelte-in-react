@@ -926,33 +926,32 @@ var app = (function (exports) {
       state1: {
         style: "embed",
         type: "change",
-        element: document.querySelector(
-          "body > div:nth-of-type(1) > div:nth-of-type(1)"
-        ),
+        seceltor: "#root > div > div:nth-of-type(1) > div:nth-of-type(1)",
+        element: null,
       },
       state2: {
         style: "embed",
         type: "change",
-        element: document.querySelector(
-          "body > div:nth-of-type(1) > div:nth-of-type(2)"
-        ),
+        selector: "#root > div > div:nth-of-type(1) > div:nth-of-type(2)",
+        element: null,
       },
       state3: {
         style: "embed",
         type: "change",
-        element: document.querySelector(
-          "body > div:nth-of-type(1) > div:nth-of-type(3)"
-        ),
+        selector: "#root > div > div:nth-of-type(1) > div:nth-of-type(3)",
+        element: null,
       },
       state4: {
         style: "embed",
         type: "insert-before",
-        element: document.querySelector("body > div:nth-of-type(2) > div"),
+        selector: "#root > div > div:nth-of-type(2) > div",
+        element: null,
       },
       state5: {
         style: "embed",
         type: "insert-after",
-        element: document.querySelector("body > div:nth-of-type(2) > div"),
+        selector: "#root > div > div:nth-of-type(2) > div",
+        element: null,
       },
       state6: {
         style: "modal",
@@ -961,8 +960,9 @@ var app = (function (exports) {
       },
     };
 
-    function mountReplace(Component, options) {
+    const mountReplace = (Component, options) => {
       const target = options.target;
+      console.log(target);
       document.querySelectorAll("#svelte-container").forEach((e) => {
         e.remove();
       });
@@ -970,10 +970,11 @@ var app = (function (exports) {
       container.id = "svelte-container";
       container.style.height = "100%";
       container.style.width = "100%";
-      container.style.top = 0;
-      container.style.left = 0;
+
       if (target.style === "modal") {
         container.style.position = "absolute";
+        container.style.top = 0;
+        container.style.left = 0;
       } else if (target.style === "embed") {
         if (target.type === "change") {
           const elems = target.element.children;
@@ -1010,13 +1011,35 @@ var app = (function (exports) {
           console.log("here");
         }
       }
-    }
+    };
+
+    // オブザーバの設定
+    const config = {
+      childList: true,
+      subtree: true,
+    };
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        // 何かしたいこと
+        console.log(mutation.target);
+        // console.log(document.querySelector(selector));
+      });
+    });
+    observer.observe(document.body, config);
 
     state.subscribe((v) => {
-      mountReplace(App, {
-        target: stateToTarget[v],
-        props: { state },
-      });
+      console.log(v);
+      const target = stateToTarget[v];
+      //ここにmutaionObserverをいれてDomを監視する。
+      if (target.element) {
+        mountReplace(App, {
+          target: target,
+          props: { state },
+        });
+      } else {
+        stateToTarget[v].seceltor;
+        // オブザーバインスタンスを作成
+      }
     });
 
     exports.state = state;

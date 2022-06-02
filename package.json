@@ -3,14 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite && rollup -c -w",
+    "dev": "vite",
+    "watch:svelte": "rollup -c -w",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "sirv-cli": "^2.0.0"
+    "start": "sirv public --no-clear"
   },
   "dependencies": {
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "sirv-cli": "^2.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
