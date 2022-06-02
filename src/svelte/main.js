@@ -1,7 +1,7 @@
 import App from "./App.svelte";
 import { writable } from "svelte/store";
 
-export const state = writable("state4");
+export const state = writable("state1");
 
 const stateToTarget = {
   state1: {
@@ -90,7 +90,6 @@ const mountReplace = (Component, options) => {
       parent.insertBefore(container, target.element);
     } else if (target.type === "insert-after") {
       const parent = target.element.parentNode;
-      console.log("after-elem", target.element);
       target.element.after(container);
     } else {
       console.log("here");
@@ -130,7 +129,7 @@ state.subscribe((v) => {
     const elem = document.querySelector(selector);
     if (!!elem) {
       console.log("target is not loaded");
-      const elem = document.querySelector(selector);
+      const elem = document.querySelector(`${selector}:not(#svelte-container)`);
       console.log(elem);
       mountReplace(App, {
         target: { ...target, element: elem },
