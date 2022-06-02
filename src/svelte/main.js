@@ -7,7 +7,7 @@ const stateToTarget = {
   state1: {
     style: "embed",
     type: "change",
-    selector: "#root > div > div:nth-of-type(1) > div:nth-of-type(1)",
+    selector: "#state1",
     element: null,
   },
   state2: {
@@ -55,8 +55,8 @@ const mountReplace = (Component, options) => {
 
   if (target.style === "modal") {
     container.style.position = "absolute";
-    container.style.top = 0;
-    container.style.left = 0;
+    container.style.top = "0";
+    container.style.left = "0";
   } else if (target.style === "embed") {
     if (target.type === "change") {
       const elems = target.element.children;
@@ -97,7 +97,6 @@ const mountReplace = (Component, options) => {
   }
 };
 
-// オブザーバの設定
 const config = {
   childList: true,
   subtree: true,
@@ -130,7 +129,6 @@ state.subscribe((v) => {
     if (!!elem) {
       console.log("target is not loaded");
       const elem = document.querySelector(`${selector}:not(#svelte-container)`);
-      console.log(elem);
       mountReplace(App, {
         target: { ...target, element: elem },
         props: { state },

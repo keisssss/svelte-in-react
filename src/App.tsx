@@ -1,21 +1,36 @@
-import { useState } from "react";
-import logo from "./logo.svg";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [isMouted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setMounted(true);
+    }, 3000);
+  });
 
   return (
     <div className="App">
       <div className="block-container">
         <span>rewrite</span>
-        <div className="block" style={{ border: "2px solid pink" }}>
-          HTML-element 1
-        </div>
-        <div className="block" style={{ border: "2px solid blue" }}>
+        {isMouted && (
+          <div
+            className="block"
+            id="state1"
+            style={{ border: "2px solid pink" }}
+          >
+            HTML-element 1
+          </div>
+        )}
+        <div className="block" id="state2" style={{ border: "2px solid blue" }}>
           HTML-element 2
         </div>
-        <div className="block" style={{ border: "2px solid green" }}>
+        <div
+          className="block"
+          id="state3"
+          style={{ border: "2px solid green" }}
+        >
           HTML-element 3
         </div>
       </div>
