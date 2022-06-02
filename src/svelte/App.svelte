@@ -1,7 +1,5 @@
 <script>
   export let state;
-  import { beforeUpdate, onMount, afterUpdate, tick } from "svelte";
-  import { writable, get } from "svelte/store";
   const onClick = (to) => {
     state.set(to);
   };

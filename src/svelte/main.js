@@ -1,14 +1,13 @@
 import App from "./App.svelte";
-import { writable, get } from "svelte/store";
-import { afterUpdate } from "svelte";
+import { writable } from "svelte/store";
 
-export const state = writable("state6");
+export const state = writable("state4");
 
 const stateToTarget = {
   state1: {
     style: "embed",
     type: "change",
-    seceltor: "#root > div > div:nth-of-type(1) > div:nth-of-type(1)",
+    selector: "#root > div > div:nth-of-type(1) > div:nth-of-type(1)",
     element: null,
   },
   state2: {
@@ -43,10 +42,11 @@ const stateToTarget = {
 };
 
 const mountReplace = (Component, options) => {
+  console.log("mountReplace is called");
   const target = options.target;
-  console.log(target);
   document.querySelectorAll("#svelte-container").forEach((e) => {
     e.remove();
+    console.log("svelte-container removed");
   });
   const container = document.createElement("div");
   container.id = "svelte-container";
@@ -60,11 +60,14 @@ const mountReplace = (Component, options) => {
   } else if (target.style === "embed") {
     if (target.type === "change") {
       const elems = target.element.children;
+
       if (elems.length !== 0) {
         while (elems.length) {
+          // domの中身を全消しする
           elems.item(0).remove();
         }
       } else {
+        // 謎にタグに入ってない場合のハンドリング（innerHTMLがあるかどうかでわけていいかも？）
         target.element.innerHTML = "";
       }
     } else if (target.type === "insert-before") {
@@ -77,7 +80,6 @@ const mountReplace = (Component, options) => {
   }
 
   new Component({ ...options, target: container });
-  console.log(target);
   if (target.style === "modal") {
     target.element.appendChild(container);
   } else if (target.style === "embed") {
@@ -88,6 +90,7 @@ const mountReplace = (Component, options) => {
       parent.insertBefore(container, target.element);
     } else if (target.type === "insert-after") {
       const parent = target.element.parentNode;
+      console.log("after-elem", target.element);
       target.element.after(container);
     } else {
       console.log("here");
@@ -100,26 +103,42 @@ const config = {
   childList: true,
   subtree: true,
 };
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    // 何かしたいこと
-    console.log(mutation.target);
-    // console.log(document.querySelector(selector));
+
+const observerWrapper = (target, selector) => {
+  const observer = new MutationObserver(() => {
+    const elem = document.querySelector(selector);
+    if (elem) {
+      observer.disconnect();
+      mountReplace(App, {
+        target: { ...target, element: elem },
+        props: { state },
+      });
+    }
   });
-});
-observer.observe(document.body, config);
+  observer.observe(document.body, config);
+};
 
 state.subscribe((v) => {
-  console.log(v);
   const target = stateToTarget[v];
-  //ここにmutaionObserverをいれてDomを監視する。
   if (target.element) {
     mountReplace(App, {
       target: target,
       props: { state },
     });
   } else {
-    const selector = stateToTarget[v].seceltor;
-    // オブザーバインスタンスを作成
+    const selector = stateToTarget[v].selector;
+    const elem = document.querySelector(selector);
+    if (!!elem) {
+      console.log("target is not loaded");
+      const elem = document.querySelector(selector);
+      console.log(elem);
+      mountReplace(App, {
+        target: { ...target, element: elem },
+        props: { state },
+      });
+    } else {
+      console.log("target will be loaded");
+      observerWrapper(target, selector);
+    }
   }
 });
