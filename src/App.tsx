@@ -7,7 +7,7 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setMounted(true);
-    }, 3000);
+    }, 1000);
   });
 
   return (
@@ -36,7 +36,7 @@ function App() {
       </div>
       <div className="insert-container">
         <span>insert</span>
-        <div className="block" style={{ border: "2px solid red" }}>
+        <div className="block" id="state4" style={{ border: "2px solid red" }}>
           HTML-element 4
         </div>
       </div>

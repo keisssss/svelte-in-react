@@ -1,7 +1,7 @@
 import App from "./App.svelte";
 import { writable } from "svelte/store";
 
-export const state = writable("state1");
+export const state = writable("state4");
 
 const stateToTarget = {
   state1: {
@@ -31,7 +31,7 @@ const stateToTarget = {
   state5: {
     style: "embed",
     type: "insert-after",
-    selector: "#root > div > div:nth-of-type(2) > div",
+    selector: "#state4",
     element: null,
   },
   state6: {
@@ -102,9 +102,9 @@ const config = {
   subtree: true,
 };
 
-const observerWrapper = (target, selector) => {
+const observerWrapper = (target) => {
   const observer = new MutationObserver(() => {
-    const elem = document.querySelector(selector);
+    const elem = document.querySelector(target.selector);
     if (elem) {
       observer.disconnect();
       mountReplace(App, {
@@ -118,24 +118,15 @@ const observerWrapper = (target, selector) => {
 
 state.subscribe((v) => {
   const target = stateToTarget[v];
-  if (target.element) {
+  const elem = target.elem ?? document.querySelector(target.selector);
+  if (elem) {
+    console.log("target is loaded");
     mountReplace(App, {
-      target: target,
+      target: { ...target, element: elem },
       props: { state },
     });
   } else {
-    const selector = stateToTarget[v].selector;
-    const elem = document.querySelector(selector);
-    if (!!elem) {
-      console.log("target is not loaded");
-      const elem = document.querySelector(`${selector}:not(#svelte-container)`);
-      mountReplace(App, {
-        target: { ...target, element: elem },
-        props: { state },
-      });
-    } else {
-      console.log("target will be loaded");
-      observerWrapper(target, selector);
-    }
+    console.log("target will be loaded");
+    observerWrapper(target);
   }
 });
