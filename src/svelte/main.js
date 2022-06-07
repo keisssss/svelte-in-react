@@ -60,13 +60,15 @@ const mountReplace = (Component, options) => {
   } else if (target.style === "embed") {
     if (target.type === "change") {
       const elems = target.element.children;
+      console.log("elems", elems);
+      console.log("innnerHTMK", target.element.innerHTML);
 
       if (elems.length !== 0) {
         while (elems.length) {
           // domの中身を全消しする
           elems.item(0).remove();
         }
-      } else {
+      } else if (!!target.element.innerHTML) {
         // 謎にタグに入ってない場合のハンドリング（innerHTMLがあるかどうかでわけていいかも？）
         target.element.innerHTML = "";
       }
